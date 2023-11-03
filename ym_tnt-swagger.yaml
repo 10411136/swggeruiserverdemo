@@ -1,0 +1,151 @@
+openapi: 3.0.0
+info:
+  version: 1.1.0
+  title: YM Track and Trace API  TEST
+  description: API specifications for the Track and Trace interface standard
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: For TnT 1.1.0 Dev
+    url: https://api.yangming.com/open/dcsa/api/dev/tnt
+  - description: For TnT 1.1.0 Prod
+    url: https://api.yangming.com/open/dcsa/api/tnt
+  - description: For test 1
+    url: https://api.yangming.com/open/dcsa/api/jit/dev/v1
+  - description: For test 2
+    url: https://openmybookapitest.fly.dev/query_articles
+paths: 
+  /events:
+      get:
+        tags:
+          - Events
+        description: Returns all events related to the query parameter. The endpoint requires at least 1 of the 3 query parameters to be used.
+        operationId: getEventsByEquipmentReference
+        parameters:
+          - in: query
+            name: equipmentReference
+            description: The identifier for a shipment, which is issued by and unique within each of the carriers.
+            schema:
+              type: string
+          - in: header
+            name: KeyId
+            schema:
+              type: string
+              format: uuid
+            required: true
+        responses:
+          '200':
+            description:   Successful operation
+            content:
+              application/json:
+                schema:
+                  allOf:
+                    - $ref: '#/components/schemas/ApiResponse_1'
+          '400':
+            description:   Unexpected error
+            content:
+              application/json:
+                schema:
+                  allOf:
+                    - $ref: '#/components/schemas/ApiResponseException_1'
+                    - $ref: '#/components/schemas/SystemResponseException'
+                    - $ref: '#/components/schemas/ApiResponseException_2'
+                    
+components:
+  schemas:
+    ApiResponse_1:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ApiResponseEevent_1'
+              - $ref: '#/components/schemas/ApiResponseEevent_2'
+        zoneStatus:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ApiResponseException_1'
+              - $ref: '#/components/schemas/ApiResponseException_2'
+      description: ok
+    ApiResponse_2:
+      type: object
+      properties:
+        httpMethod:
+          type: string
+          example: GET
+        requestUri:
+          type: string
+          example: https://api.yangming.com/open/dcsa/api/tnt/1.1.0/events
+    ApiResponseEevent_1:
+      type: object
+      properties:
+        eventID:
+          type: string
+          example: CTR_689389697_6
+        eventDateTime:
+          type: string
+          example: date-time
+        eventClassifierCode:
+          type: string
+          example: ACT
+        eventTypeCode:
+          type: string
+          example: ARRI
+        equipmentReference:
+          type: string
+          example: YMLU1234567
+    ApiResponseEevent_2:
+      type: object
+      properties:
+        eventID:
+          type: string
+          example: CTR_689389697_7
+        eventDateTime:
+          type: string
+          example: date-time
+        eventClassifierCode:
+          type: string
+          example: ACT
+        eventTypeCode:
+          type: string
+          example: ARRI
+        transportReference:
+          type: string
+          example: 9648714
+    ApiResponseException_1:
+      type: object
+      properties:
+        httpMethod:
+          type: string
+          example: GET
+        requestUri:
+          type: string
+          example: https://api.yangming.com/open/dcsa/api/tnt/1.1.0/events
+    SystemResponseException:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              reason:
+                type: string
+                example: systemException
+              message:
+                type: string
+                example: Exception occurs when calling the API.
+    ApiResponseException_2:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          example: 400
+        statusCodeText:
+          type: string
+          example: Bad Request
+        errorDateTime:
+          type: string
+          format: date-time

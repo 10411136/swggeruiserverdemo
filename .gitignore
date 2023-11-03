@@ -92,3 +92,4 @@ sw.*
 # flyio
 Dockerfile
 fly.toml
+.dockerignore
